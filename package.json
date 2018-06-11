@@ -1,0 +1,17 @@
+{
+  "name": "pixofont",
+  "version": "1.0.0",
+  "description": "A library to extract pixel data from text",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "pixel",
+    "font",
+    "js",
+    "oldschool"
+  ],
+  "author": "Salih Cenap Baydar",
+  "license": "ISC"
+}
