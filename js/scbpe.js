@@ -1,11 +1,11 @@
 //Salih Cenap Baydar Particle Engine: SCBPE
 var t = 0, counter = 0;
-const DAMPING = 0.99;
+const DAMPING = 0.1;
 
 function Particle(x, y, z=0, r=0, g=0, b=0, a=255) {
-  this.x = this.oldx = x;
-  this.y = this.oldy = y;
-  this.z = this.oldy = z;
+  this.x = this.oldx = this.ox = x;
+  this.y = this.oldy = this.oy = y;
+  this.z = this.oldy = this.oz = z;
   this.color = {"r":r,"g":g,"b":b,"a":a/255};
   this.rotation = Math.random() / 50;
   this.speed = 0.1 + Math.random();
@@ -14,9 +14,13 @@ function Particle(x, y, z=0, r=0, g=0, b=0, a=255) {
 }
 
 Particle.prototype.moveTo = function(x,y,z) {
-  this.x = x;
-  this.y = y;
-  this.z = z;
+  this.x += x;
+  this.y += y;
+  this.z += z;
+
+  this.ox = this.x;
+  this.oy = this.y;
+  this.oz = this.z;
 };
 
 Particle.prototype.moveTowards = function(x,y,z) {
@@ -31,13 +35,10 @@ Particle.prototype.moveTowards = function(x,y,z) {
   }
 };
 
-Particle.prototype.integrate = function() {
-  var velocityX = (this.x - this.oldX) * DAMPING * this.speed;
-  var velocityY = (this.y - this.oldY) * DAMPING * this.speed;
-  var velocityZ = (this.z - this.oldZ) * DAMPING * this.speed;
-  this.oldX = this.x;
-  this.oldY = this.y;
-  this.oldZ = this.z;
+Particle.prototype.integrate = function(x,y,z) {
+  var velocityX = (x - this.x) * DAMPING * this.speed;
+  var velocityY = (y - this.y) * DAMPING * this.speed;
+  var velocityZ = (z - this.z) * DAMPING * this.speed;
   this.x += velocityX;
   this.y += velocityY;
   this.z += velocityZ;
@@ -48,6 +49,20 @@ Particle.prototype.attract = function(x, y, z) {
   var dy = y - this.y;
   var dz = z - this.z;
   //var distance = Math.sqrt(dx * dx + dy * dy);
+  var distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+  if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+    this.x += dx / distance;
+    this.y += dy / distance;
+    this.z += dz / distance;
+  }
+  //console.log(x , this.x, Math.abs(dx));
+};
+
+Particle.prototype.restore = function() {
+  var dx = this.ox - this.x;
+  var dy = this.oy - this.y;
+  var dz = this.oz - this.z;
+  // var distance = Math.sqrt(dx * dx + dy * dy);
   var distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
   if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
     this.x += dx / distance;
